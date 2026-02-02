@@ -1,201 +1,467 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Activity,
+  Wind,
+  Brain,
+  Cookie,
+  Heart,
+  Eye,
+  User,
+  Utensils,
+  Droplets,
+  Syringe,
+  Sparkles,
+} from "lucide-react";
 
-const severityOptions = [
-	{ label: "None", value: 0 },
-	{ label: "Mild", value: 1 },
-	{ label: "Moderate", value: 2 },
-	{ label: "Severe", value: 3 },
-];
+/* ---------------- TYPES ---------------- */
 
-const dietOptions = [
-	{ label: "Regular", value: 0 },
-	{ label: "Occasional", value: 1 },
-	{ label: "Rare", value: 2 },
-];
-
-type ScreeningData = {
-	fatigue: number;
-	dizziness: number;
-	breathlessness: number;
-	pallor: number;
-	diet: number;
-	heartRate: string;
+type SymptomForm = {
+  fatigue: number; // 1–5
+  breathlessness: boolean; // Yes/No
+  dizziness: boolean; // Yes/No
+  pica: boolean; // Yes/No
+  fastHeartbeat: boolean; // Yes/No
+  pallor: "none" | "mild" | "severe";
+  ageGroup: "child" | "teen" | "adult" | "senior";
+  diet: "rarely" | "sometimes" | "often" | "daily";
+  heavyBleeding: boolean; // Yes/No
+  recentBloodLoss: boolean; // Yes/No
 };
 
-function calculateRisk(data: ScreeningData) {
-	const maxScore = 16; // 4 symptoms (0-12) + diet (0-2) + heart rate bonus (0-2)
-	let rawScore = 0;
+/* ---------------- RISK CALCULATION ---------------- */
+/*
+Enhanced scoring logic with new questions:
+- Fatigue (1–5) → 0–16
+- Breathlessness → 12
+- Dizziness → 8
+- Pica → 15
+- Fast heartbeat → 8
+- Pallor → mild 8, severe 20
+- Age → child/senior 8
+- Diet → rarely 12, sometimes 8, often 4, daily 0
+- Heavy bleeding → 12
+- Recent blood loss → 12
 
-	rawScore += data.fatigue;
-	rawScore += data.dizziness;
-	rawScore += data.breathlessness;
-	rawScore += data.pallor;
-	rawScore += data.diet;
+Max ≈ 100
+*/
 
-	if (Number(data.heartRate) > 100) {
-		rawScore += 2;
-	}
+function calculateRisk(data: SymptomForm) {
+  let score = 0;
 
-	const normalizedScore = Math.min(100, Math.round((rawScore / maxScore) * 100));
+  score += (data.fatigue - 1) * 4;
+  score += data.breathlessness ? 12 : 0;
+  score += data.dizziness ? 8 : 0;
+  score += data.pica ? 15 : 0;
+  score += data.fastHeartbeat ? 8 : 0;
 
-	let riskLevel = "Low";
+  if (data.pallor === "mild") score += 8;
+  if (data.pallor === "severe") score += 20;
 
-	if (normalizedScore >= 65) {
-		riskLevel = "High";
-	} else if (normalizedScore >= 35) {
-		riskLevel = "Medium";
-	}
+  if (data.ageGroup === "child" || data.ageGroup === "senior") score += 8;
 
-	return { score: normalizedScore, riskLevel };
+  if (data.diet === "rarely") score += 12;
+  else if (data.diet === "sometimes") score += 8;
+  else if (data.diet === "often") score += 4;
+
+  score += data.heavyBleeding ? 12 : 0;
+  score += data.recentBloodLoss ? 12 : 0;
+
+  let risk = "Low";
+  if (score >= 60) risk = "High";
+  else if (score >= 30) risk = "Medium";
+
+  return { score, risk };
 }
 
+/* ---------------- QUESTION CARD ---------------- */
+
+function QuestionCard({
+  title,
+  assamese,
+  icon: Icon,
+  children,
+}: {
+  title: string;
+  assamese?: string;
+  icon?: React.ElementType;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="group rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-sm p-6 space-y-4 shadow-sm hover:shadow-lg hover:border-red-300 transition-all duration-300">
+      <div className="flex items-start gap-3">
+        {Icon && (
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
+            <Icon className="w-5 h-5 text-white" />
+          </div>
+        )}
+        <div className="flex-1">
+          <h3 className="font-semibold text-slate-900 text-lg">{title}</h3>
+          {assamese && (
+            <p className="text-sm text-slate-500 mt-1">{assamese}</p>
+          )}
+        </div>
+      </div>
+      <div className="pl-13">{children}</div>
+    </div>
+  );
+}
+
+/* ---------------- PROGRESS BAR ---------------- */
+
+function ProgressBar({ progress }: { progress: number }) {
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between items-center">
+        <span className="text-sm font-medium text-slate-700">
+          Form Progress
+        </span>
+        <span className="text-sm font-semibold text-red-600">
+          {Math.round(progress)}%
+        </span>
+      </div>
+      <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-red-500 via-rose-500 to-pink-500 transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- PAGE ---------------- */
+
 export default function ScreenPage() {
-	const router = useRouter();
-	const [formData, setFormData] = useState<ScreeningData>({
-		fatigue: 0,
-		dizziness: 0,
-		breathlessness: 0,
-		pallor: 0,
-		diet: 0,
-		heartRate: "",
-	});
+  const router = useRouter();
 
-	const handleChange = (field: keyof ScreeningData, value: number | string) => {
-		setFormData((prev) => ({
-			...prev,
-			[field]: value,
-		}));
-	};
+  const [form, setForm] = useState<SymptomForm>({
+    fatigue: 1,
+    breathlessness: false,
+    dizziness: false,
+    pica: false,
+    fastHeartbeat: false,
+    pallor: "none",
+    ageGroup: "adult",
+    diet: "sometimes",
+    heavyBleeding: false,
+    recentBloodLoss: false,
+  });
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
+  // Calculate progress based on meaningful interactions
+  const calculateProgress = () => {
+    let filledCount = 0;
+    const totalQuestions = 10;
 
-		if (!formData.heartRate) {
-			alert("Please enter heart rate");
-			return;
-		}
+    if (form.fatigue > 1) filledCount++;
+    if (form.breathlessness) filledCount++;
+    if (form.dizziness) filledCount++;
+    if (form.pica) filledCount++;
+    if (form.fastHeartbeat) filledCount++;
+    if (form.pallor !== "none") filledCount++;
+    if (form.ageGroup !== "adult") filledCount++; // adult is default
+    if (form.diet !== "sometimes") filledCount++; // sometimes is default
+    if (form.heavyBleeding) filledCount++;
+    if (form.recentBloodLoss) filledCount++;
 
-		const result = calculateRisk(formData);
+    return (filledCount / totalQuestions) * 100;
+  };
 
-		router.push(`/result?score=${result.score}&risk=${result.riskLevel}`);
-	};
+  const [progress, setProgress] = useState(0);
 
-	return (
-		<div className="relative min-h-screen bg-linear-to-br from-blue-50 via-white to-blue-100">
-			<div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-16">
-				<div className="space-y-3 text-center">
-					<span className="inline-flex items-center rounded-full bg-blue-100 px-4 py-1 text-sm font-semibold text-blue-700">
-						Severity scale locked: 0 None · 1 Mild · 2 Moderate · 3 Severe
-					</span>
-					<h1 className="text-3xl font-semibold text-slate-900">Screen Patient</h1>
-					<p className="text-base text-slate-600">Collect symptoms, score risk, and move to the summary. No data leaves this device.</p>
-				</div>
+  useEffect(() => {
+    setProgress(calculateProgress());
+  }, [form]);
 
-				<form onSubmit={handleSubmit} className="grid gap-6 rounded-3xl border border-blue-100 bg-white/80 p-8 shadow-xl shadow-blue-100 backdrop-blur">
-					<div className="grid gap-6 md:grid-cols-2">
-						<label className="flex flex-col gap-2 text-sm font-medium text-slate-800">
-							Fatigue
-							<select
-								className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={formData.fatigue}
-								onChange={(event) => handleChange("fatigue", Number(event.target.value))}
-							>
-								{severityOptions.map((option) => (
-									<option key={option.value} value={option.value}>
-										{option.label}
-									</option>
-								))}
-							</select>
-						</label>
-						<label className="flex flex-col gap-2 text-sm font-medium text-slate-800">
-							Dizziness
-							<select
-								className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={formData.dizziness}
-								onChange={(event) => handleChange("dizziness", Number(event.target.value))}
-							>
-								{severityOptions.map((option) => (
-									<option key={option.value} value={option.value}>
-										{option.label}
-									</option>
-								))}
-							</select>
-						</label>
-						<label className="flex flex-col gap-2 text-sm font-medium text-slate-800">
-							Breathlessness
-							<select
-								className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={formData.breathlessness}
-								onChange={(event) => handleChange("breathlessness", Number(event.target.value))}
-							>
-								{severityOptions.map((option) => (
-									<option key={option.value} value={option.value}>
-										{option.label}
-									</option>
-								))}
-							</select>
-						</label>
-						<label className="flex flex-col gap-2 text-sm font-medium text-slate-800">
-							Pallor
-							<select
-								className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={formData.pallor}
-								onChange={(event) => handleChange("pallor", Number(event.target.value))}
-							>
-								{severityOptions.map((option) => (
-									<option key={option.value} value={option.value}>
-										{option.label}
-									</option>
-								))}
-							</select>
-						</label>
-					</div>
+  const submitHandler = () => {
+    const result = calculateRisk(form);
+    router.push(`/result?score=${result.score}&risk=${result.risk}`);
+  };
 
-					<div className="grid gap-6 md:grid-cols-2">
-						<label className="flex flex-col gap-2 text-sm font-medium text-slate-800">
-							Diet (iron-rich intake)
-							<select
-								className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={formData.diet}
-								onChange={(event) => handleChange("diet", Number(event.target.value))}
-							>
-								{dietOptions.map((option) => (
-									<option key={option.value} value={option.value}>
-										{option.label}
-									</option>
-								))}
-							</select>
-						</label>
-						<label className="flex flex-col gap-2 text-sm font-medium text-slate-800">
-							Heart rate
-							<input
-								type="number"
-								min={0}
-								className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={formData.heartRate}
-								onChange={(event) => handleChange("heartRate", event.target.value)}
-								placeholder="eg. 96"
-							/>
-						</label>
-					</div>
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-red-300/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-rose-300/20 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
 
-					<div className="flex flex-col gap-3 rounded-2xl bg-blue-50/80 p-4 text-sm text-blue-800">
-						<span className="font-semibold">How scoring works</span>
-						<span>Each symptom uses the locked 0-3 scale. Diet adds a penalty if intake is low. Heart rates above 100 add a two-point bonus.</span>
-						<span>Scores scale to 0-100: below 35 → Low risk, 35-64 → Medium risk, 65+ → High risk.</span>
-					</div>
+      <div className="relative mx-auto max-w-3xl px-4 py-12 space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md">
+            <Sparkles className="w-5 h-5 text-red-600" />
+            <span className="text-sm font-semibold text-slate-700">
+              Health Screening
+            </span>
+          </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 bg-clip-text text-transparent">
+            Anemia Symptom Screening
+          </h1>
+          <p className="text-slate-600 max-w-xl mx-auto">
+            Answer the questions based on how the person feels today. This
+            screening helps identify potential anemia risk.
+          </p>
+        </div>
 
-					<button
-						type="submit"
-						className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-500"
-					>
-						Calculate Risk
-					</button>
-				</form>
-			</div>
-		</div>
-	);
+        {/* Progress Bar */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-slate-200">
+          <ProgressBar progress={progress} />
+        </div>
+
+        {/* Questions */}
+        <div className="space-y-6">
+          {/* AGE GROUP */}
+          <QuestionCard
+            title="What is your age group?"
+            assamese="আপোনাৰ বয়স গোট কি?"
+            icon={User}
+          >
+            <div className="space-y-2">
+              {[
+                { value: "child", label: "Child (Under 12)" },
+                { value: "teen", label: "Teenager (12-18)" },
+                { value: "adult", label: "Adult (19-60)" },
+                { value: "senior", label: "Senior (60+)" },
+              ].map((option) => (
+                <label
+                  key={option.value}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 cursor-pointer transition-colors"
+                >
+                  <input
+                    type="radio"
+                    name="ageGroup"
+                    value={option.value}
+                    checked={form.ageGroup === option.value}
+                    onChange={(e) =>
+                      setForm({ ...form, ageGroup: e.target.value as any })
+                    }
+                    className="w-4 h-4 text-red-600 focus:ring-2 focus:ring-red-500"
+                  />
+                  <span className="text-slate-700">{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </QuestionCard>
+
+          {/* FATIGUE */}
+          <QuestionCard
+            title="Do you feel tired even after rest?"
+            assamese="জিৰণিৰ পিছতো ভাগৰ লাগে নেকি?"
+            icon={Activity}
+          >
+            <div className="space-y-3">
+              <input
+                type="range"
+                min={1}
+                max={5}
+                value={form.fatigue}
+                onChange={(e) =>
+                  setForm({ ...form, fatigue: Number(e.target.value) })
+                }
+                className="w-full h-2 bg-gradient-to-r from-green-200 via-yellow-200 to-red-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-red-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer"
+              />
+              <div className="flex justify-between text-xs text-slate-500">
+                <span>Not at all</span>
+                <span className="font-semibold text-red-600 text-base">
+                  {form.fatigue} / 5
+                </span>
+                <span>Extremely</span>
+              </div>
+            </div>
+          </QuestionCard>
+
+          {/* BREATHLESSNESS */}
+          <QuestionCard
+            title="Do you feel breathless during normal activity?"
+            assamese="সাধাৰণ কামতে উশাহ লয় নেকি?"
+            icon={Wind}
+          >
+            <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                checked={form.breathlessness}
+                onChange={(e) =>
+                  setForm({ ...form, breathlessness: e.target.checked })
+                }
+                className="w-5 h-5 text-red-600 rounded focus:ring-2 focus:ring-red-500"
+              />
+              <span className="text-slate-700 font-medium">Yes</span>
+            </label>
+          </QuestionCard>
+
+          {/* DIZZINESS */}
+          <QuestionCard
+            title="Do you feel dizzy or light-headed often?"
+            assamese="সঘনাই মূৰ ঘূৰায় নেকি?"
+            icon={Brain}
+          >
+            <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                checked={form.dizziness}
+                onChange={(e) =>
+                  setForm({ ...form, dizziness: e.target.checked })
+                }
+                className="w-5 h-5 text-red-600 rounded focus:ring-2 focus:ring-red-500"
+              />
+              <span className="text-slate-700 font-medium">Yes</span>
+            </label>
+          </QuestionCard>
+
+          {/* PICA */}
+          <QuestionCard
+            title="Do you crave ice, chalk, or mud?"
+            assamese="বৰফ / চক / মাটি খাবলৈ ইচ্ছা হয় নেকি?"
+            icon={Cookie}
+          >
+            <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                checked={form.pica}
+                onChange={(e) => setForm({ ...form, pica: e.target.checked })}
+                className="w-5 h-5 text-red-600 rounded focus:ring-2 focus:ring-red-500"
+              />
+              <span className="text-slate-700 font-medium">Yes</span>
+            </label>
+          </QuestionCard>
+
+          {/* FAST HEARTBEAT */}
+          <QuestionCard
+            title="Do you feel your heart beating fast?"
+            assamese="হৃদস্পন্দন বেছি বেছি লাগে নেকি?"
+            icon={Heart}
+          >
+            <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                checked={form.fastHeartbeat}
+                onChange={(e) =>
+                  setForm({ ...form, fastHeartbeat: e.target.checked })
+                }
+                className="w-5 h-5 text-red-600 rounded focus:ring-2 focus:ring-red-500"
+              />
+              <span className="text-slate-700 font-medium">Yes</span>
+            </label>
+          </QuestionCard>
+
+          {/* PALLOR */}
+          <QuestionCard
+            title="Check color of lips / nails / inside eyelid"
+            assamese="ঠোঁট / নখ / চকুৰ তলৰ পতাৰ ৰং পৰীক্ষা কৰক"
+            icon={Eye}
+          >
+            <select
+              className="w-full rounded-lg border border-slate-300 p-3 bg-white focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all cursor-pointer"
+              value={form.pallor}
+              onChange={(e) =>
+                setForm({ ...form, pallor: e.target.value as any })
+              }
+            >
+              <option value="none">Normal (Pink)</option>
+              <option value="mild">Pale</option>
+              <option value="severe">Very Pale</option>
+            </select>
+          </QuestionCard>
+
+          {/* DIETARY HABITS */}
+          <QuestionCard
+            title="How often do you eat iron-rich foods?"
+            assamese="আপুনি কিমান সঘনাই লোহা সমৃদ্ধ খাদ্য খায়?"
+            icon={Utensils}
+          >
+            <p className="text-xs text-slate-500 mb-3">
+              (meat, leafy greens, lentils, beans)
+            </p>
+            <div className="space-y-2">
+              {[
+                { value: "rarely", label: "Rarely (Once a week or less)" },
+                { value: "sometimes", label: "Sometimes (2-3 times a week)" },
+                { value: "often", label: "Often (4-5 times a week)" },
+                { value: "daily", label: "Daily" },
+              ].map((option) => (
+                <label
+                  key={option.value}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors"
+                >
+                  <input
+                    type="radio"
+                    name="diet"
+                    value={option.value}
+                    checked={form.diet === option.value}
+                    onChange={(e) =>
+                      setForm({ ...form, diet: e.target.value as any })
+                    }
+                    className="w-4 h-4 text-red-600 focus:ring-2 focus:ring-red-500"
+                  />
+                  <span className="text-slate-700">{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </QuestionCard>
+
+          {/* HEAVY MENSTRUAL BLEEDING */}
+          <QuestionCard
+            title="Do you experience heavy menstrual bleeding?"
+            assamese="আপুনি অত্যধিক ঋতুস্ৰাৱ অনুভৱ কৰে নেকি?"
+            icon={Droplets}
+          >
+            <p className="text-xs text-slate-500 mb-3">
+              (For females of childbearing age)
+            </p>
+            <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                checked={form.heavyBleeding}
+                onChange={(e) =>
+                  setForm({ ...form, heavyBleeding: e.target.checked })
+                }
+                className="w-5 h-5 text-red-600 rounded focus:ring-2 focus:ring-red-500"
+              />
+              <span className="text-slate-700 font-medium">Yes</span>
+            </label>
+          </QuestionCard>
+
+          {/* RECENT BLOOD LOSS */}
+          <QuestionCard
+            title="Any recent injury, surgery, or blood donation?"
+            assamese="সম্প্ৰতি কোনো আঘাত, শল্যচিকিৎসা বা ৰক্তদান?"
+            icon={Syringe}
+          >
+            <p className="text-xs text-slate-500 mb-3">
+              (Within the last 3 months)
+            </p>
+            <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                checked={form.recentBloodLoss}
+                onChange={(e) =>
+                  setForm({ ...form, recentBloodLoss: e.target.checked })
+                }
+                className="w-5 h-5 text-red-600 rounded focus:ring-2 focus:ring-red-500"
+              />
+              <span className="text-slate-700 font-medium">Yes</span>
+            </label>
+          </QuestionCard>
+        </div>
+
+        {/* SUBMIT */}
+        <div className="space-y-4">
+          <button
+            onClick={submitHandler}
+            className="w-full rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 py-5 text-white font-semibold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 text-lg"
+          >
+            Calculate Risk →
+          </button>
+
+          <p className="text-xs text-slate-500 text-center">
+            This is a screening tool, not a medical diagnosis. Always consult a
+            healthcare professional.
+          </p>
+        </div>
+      </div>
+    </main>
+  );
 }
