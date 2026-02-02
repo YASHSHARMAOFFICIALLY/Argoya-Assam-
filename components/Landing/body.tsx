@@ -60,7 +60,7 @@ export default function Body() {
 	};
 
 	return (
-		<div className="bg-gradient-to-b from-slate-50 via-white to-slate-100 text-slate-900">
+		<div className="bg-linear-to-b from-slate-50 via-white to-slate-100 text-slate-900">
 			<main className="mx-auto max-w-5xl px-4 py-12 space-y-16 sm:px-6 lg:py-20 lg:space-y-24">
 				{/* Hero Section */}
 				<motion.section
@@ -230,7 +230,7 @@ export default function Body() {
 					viewport={{ once: true, margin: "-100px" }}
 					variants={itemVariants}
 				>
-					<div className="rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 p-8 text-center shadow-xl sm:p-12 lg:rounded-3xl">
+					<div className="rounded-2xl bg-linear-to-br from-teal-600 to-teal-700 p-8 text-center shadow-xl sm:p-12 lg:rounded-3xl">
 						<h2 className="text-2xl font-bold text-white sm:text-3xl">
 							Ready to prioritise anemia care?
 						</h2>
@@ -290,7 +290,7 @@ export default function Body() {
 											animate={{ rotate: isOpen ? 180 : 0 }}
 											transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] as const }}
 										>
-											<ChevronDown className="h-5 w-5 flex-shrink-0 text-teal-600" aria-hidden="true" />
+											<ChevronDown className="h-5 w-5 shrink-0 text-teal-600" aria-hidden="true" />
 										</motion.div>
 									</button>
 									<AnimatePresence initial={false}>
