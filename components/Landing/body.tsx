@@ -1,6 +1,42 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 
 export default function Body() {
+	const faqs = [
+		{
+			question: "Which endemic diseases are most common in Assam?",
+			answer:
+				"Malaria, Japanese encephalitis, dengue, filariasis, acute diarrhoeal diseases, tuberculosis, and scrub typhus remain the dominant endemic conditions faced by rural and flood-affected communities.",
+		},
+		{
+			question: "When do outbreaks usually spike?",
+			answer:
+				"Vector-borne diseases such as malaria, dengue, and Japanese encephalitis spike during the monsoon and post-monsoon seasons when standing water and humid conditions fuel mosquito breeding.",
+		},
+		{
+			question: "Who is most at risk of Japanese encephalitis?",
+			answer:
+				"Children and adults in agrarian and peri-urban belts face the highest risk, with seasonal surges that can lead to severe disability or death if symptoms are not treated early.",
+		},
+		{
+			question: "How is filariasis being tackled?",
+			answer:
+				"Several districts run mass drug administration drives to curb lymphatic filariasis, aiming to prevent the lifelong disability associated with chronic cases.",
+		},
+		{
+			question: "What emerging threats should teams watch for?",
+			answer:
+				"Scrub typhus is increasingly reported and often misdiagnosed as a viral fever, so keeping it in differential diagnoses during monsoon months helps avoid missed treatment.",
+		},
+	];
+	const [activeIndex, setActiveIndex] = useState<number | null>(0);
+
+	const handleToggle = (index: number) => {
+		setActiveIndex((prev) => (prev === index ? null : index));
+	};
 	return (
 		<div className="bg-linear-to-b from-slate-50 via-white to-slate-200 text-slate-900">
 			<main className="mx-auto max-w-5xl px-6 py-20 space-y-20">
@@ -114,6 +150,38 @@ export default function Body() {
 								</span>
 							</Link>
 						</div>
+					</div>
+				</section>
+
+				<section className="space-y-8">
+					<div className="space-y-2 text-center">
+						<h2 className="text-3xl font-semibold text-slate-900">Common endemic disease FAQs</h2>
+						<p className="text-base text-slate-600">Equip conversations with quick facts tailored for Assam's frontline teams.</p>
+					</div>
+					<div className="mx-auto max-w-3xl space-y-4">
+						{faqs.map((faq, index) => {
+							const isOpen = activeIndex === index;
+							return (
+								<div key={faq.question} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-blue-100">
+									<button
+										type="button"
+										onClick={() => handleToggle(index)}
+										className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+									>
+										<span className="text-base font-semibold text-slate-900">{faq.question}</span>
+										<ChevronDown className={`h-5 w-5 text-blue-600 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+									</button>
+									{isOpen && (
+										<div className="border-t border-slate-100 px-6 pb-6 pt-4 text-sm text-slate-600">
+											{faq.answer}
+										</div>
+									)}
+								</div>
+							);
+						})}
+					</div>
+					<div className="mx-auto max-w-3xl rounded-2xl border border-blue-200 bg-blue-50 px-6 py-5 text-sm font-medium text-blue-700">
+						Assam faces a high burden of endemic diseases such as malaria, Japanese encephalitis, dengue, filariasis, diarrhoeal diseases, tuberculosis, and scrub typhus, particularly in rural and flood-prone areas.
 					</div>
 				</section>
 			</main>

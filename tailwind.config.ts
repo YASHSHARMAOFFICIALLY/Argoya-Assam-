@@ -9,6 +9,6 @@ const config: Config = {
   theme: {
     extend: {},
   },
-  plugins: [require("tw-animate-css")],
+  plugins: [],
 };
 export default config;
