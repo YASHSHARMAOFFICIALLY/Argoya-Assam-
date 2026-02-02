@@ -55,10 +55,15 @@ export default function Footer() {
                 href="#"
                 className="text-muted-foreground hover:text-rose-500 transition-colors duration-200"
               >
+<<<<<<< HEAD
                 <FaTwitter ClassName="w-5 h-5" />
               </a> 
 
             
+=======
+                <FaTwitter className="w-5 h-5" />
+              </a>
+>>>>>>> 01efb434dcecc9c54a371ad99fbd41e8d861c317
               <a
                 href="#"
                 className="text-muted-foreground hover:text-rose-500 transition-colors duration-200"
