@@ -75,7 +75,7 @@ export default function Header() {
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center shadow-lg">
               <FaHeart className="w-7 h-7 text-white" />
             </div>
-            <span className="text-xl font-bold">Yash </span>
+            <span className="text-xl font-semibold tracking-tight">Yash </span>
           </Link>
 
           <div className="hidden md:flex md:items-center md:space-x-6">
@@ -108,7 +108,7 @@ export default function Header() {
                     ) : (
                       <Link
                         href={item.href}
-                        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+                        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-active:bg-accent/50 data-state-open:bg-accent/50"
                       >
                         {item.title}
                       </Link>
@@ -149,13 +149,13 @@ export default function Header() {
                 <div key={item.title} className="space-y-2">
                   {item.items ? (
                     <>
-                      <div className="font-medium">{item.title}</div>
+                      <div className="font-semibold">{item.title}</div>
                       <div className="ml-4 space-y-2">
                         {item.items.map((subItem) => (
                           <Link
                             key={subItem.title}
                             href={subItem.href}
-                            className="block text-sm text-muted-foreground hover:text-foreground"
+                            className="block text-sm font-semibold text-muted-foreground hover:text-foreground"
                             onClick={() => setIsOpen(false)}
                           >
                             {subItem.title}
@@ -166,7 +166,7 @@ export default function Header() {
                   ) : (
                     <Link
                       href={item.href}
-                      className="block font-medium hover:text-foreground"
+                      className="block font-semibold hover:text-foreground"
                       onClick={() => setIsOpen(false)}
                     >
                       {item.title}

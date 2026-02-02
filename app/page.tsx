@@ -1,13 +1,5 @@
-import Image from "next/image";
-import Header from "@/components/Landing/header";
-import Footer from "@/components/Landing/footer";
+import Body from "@/components/Landing/body";
 
 export default function Home() {
-  return (
-
-    <div>
-     
-      
-      </div>
-  )
+	return <Body />;
 }

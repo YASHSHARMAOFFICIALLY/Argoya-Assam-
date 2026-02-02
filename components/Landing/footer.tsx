@@ -55,7 +55,7 @@ export default function Footer() {
                 href="#"
                 className="text-muted-foreground hover:text-rose-500 transition-colors duration-200"
               >
-                <FaTwitter ClassName="w-5 h-5" />
+                <FaTwitter className="w-5 h-5" />
               </a>
               <a
                 href="#"
