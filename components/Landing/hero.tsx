@@ -16,7 +16,6 @@ export  default function Hero() {
             {/* Badge */}
             <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full">
               <span className="w-2 h-2 bg-accent-400 rounded-full animate-pulse"></span>
-              <span className="text-sm font-medium">Winning Hackathon Project 2026</span>
             </div>
 
             {/* Main Heading */}
