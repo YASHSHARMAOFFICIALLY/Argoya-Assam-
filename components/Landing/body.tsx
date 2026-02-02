@@ -3,6 +3,27 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+// Animation variants for staggered fade-in
+const containerVariants = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.1,
+		},
+	},
+};
+
+const itemVariants = {
+	hidden: { opacity: 0, y: 20 },
+	visible: {
+		opacity: 1,
+		y: 0,
+		transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as const },
+	},
+};
 
 export default function Body() {
 	const faqs = [
@@ -37,153 +58,269 @@ export default function Body() {
 	const handleToggle = (index: number) => {
 		setActiveIndex((prev) => (prev === index ? null : index));
 	};
+
 	return (
-		<div className="bg-linear-to-b from-slate-50 via-white to-slate-200 text-slate-900">
-			<main className="mx-auto max-w-5xl px-6 py-20 space-y-20">
-				<section className="grid gap-10 rounded-3xl bg-white/90 p-10 shadow-xl shadow-blue-100 sm:grid-cols-[1.1fr,0.9fr] sm:items-center">
-					<div className="space-y-6">
-						<span className="inline-flex items-center rounded-full bg-blue-100 px-4 py-1 text-sm font-semibold text-blue-700">
+		<div className="bg-gradient-to-b from-slate-50 via-white to-slate-100 text-slate-900">
+			<main className="mx-auto max-w-5xl px-4 py-12 space-y-16 sm:px-6 lg:py-20 lg:space-y-24">
+				{/* Hero Section */}
+				<motion.section
+					initial="hidden"
+					whileInView="visible"
+					viewport={{ once: true, margin: "-100px" }}
+					variants={containerVariants}
+					className="grid gap-8 rounded-2xl bg-white p-6 shadow-lg sm:grid-cols-[1.1fr,0.9fr] sm:items-center sm:gap-10 sm:p-10 lg:rounded-3xl"
+				>
+					<motion.div variants={itemVariants} className="space-y-5">
+						<span className="inline-flex items-center rounded-full bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-800 border border-teal-200">
 							Field-ready anemia insights
 						</span>
-						<h1 className="text-4xl font-semibold leading-tight md:text-5xl">
+						<h1 className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-5xl">
 							Screen, score, and guide within minutes
 						</h1>
-						<p className="text-lg text-slate-600">
+						<p className="text-base text-slate-700 sm:text-lg leading-relaxed">
 							A minimal workflow for frontline teams to flag anemia risk using simple symptom inputs.
 						</p>
-						<p className="text-sm text-blue-600">
+						<p className="text-sm text-teal-700 font-medium">
 							(গ্ৰাম্য অসমৰ বাবে সহজ স্বাস্থ্য পৰীক্ষা ব্যৱস্থা)
 						</p>
-						<div className="flex flex-wrap items-center gap-4">
-							<Link href="/screen">
-								<span className="inline-flex items-center justify-center rounded-full bg-blue-600 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-500">
+						<div className="flex flex-col items-start gap-4 pt-2 sm:flex-row sm:items-center">
+							<Link href="/screen" className="w-full sm:w-auto">
+								<motion.span
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+									className="inline-flex w-full items-center justify-center rounded-lg bg-teal-600 px-8 py-4 text-base font-semibold text-white shadow-md transition-colors hover:bg-teal-700 focus:outline-hidden focus:ring-4 focus:ring-teal-300 sm:w-auto"
+								>
 									Start Screening
-								</span>
+								</motion.span>
 							</Link>
-							<span className="text-sm text-slate-500">Offline support · Works on entry-level Android</span>
+							<span className="text-sm text-slate-600">
+								Offline support · Works on entry-level Android
+							</span>
 						</div>
-					</div>
-					<div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-8 text-slate-700">
-						<p className="text-sm font-medium uppercase tracking-[0.25em] text-blue-600">Quick snapshot</p>
-						<div className="grid gap-4 sm:grid-cols-2">
-							<div className="rounded-2xl bg-white p-4 shadow-sm shadow-blue-100">
-								<p className="text-xs uppercase text-blue-600">Inputs</p>
+					</motion.div>
+
+					<motion.div
+						variants={itemVariants}
+						className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-6 sm:p-8"
+					>
+						<p className="text-xs font-semibold uppercase tracking-wide text-teal-700">
+							Quick snapshot
+						</p>
+						<div className="grid gap-3 sm:grid-cols-2">
+							<div className="rounded-lg bg-white p-4 shadow-sm border border-slate-100">
+								<p className="text-xs font-medium uppercase text-teal-600">Inputs</p>
 								<p className="mt-2 text-lg font-semibold text-slate-900">Vitals + symptoms</p>
 							</div>
-							<div className="rounded-2xl bg-white p-4 shadow-sm shadow-blue-100">
-								<p className="text-xs uppercase text-blue-600">Output</p>
+							<div className="rounded-lg bg-white p-4 shadow-sm border border-slate-100">
+								<p className="text-xs font-medium uppercase text-teal-600">Output</p>
 								<p className="mt-2 text-lg font-semibold text-slate-900">Clear next steps</p>
 							</div>
 						</div>
-						<p className="text-sm text-slate-600">
+						<p className="text-sm text-slate-700 leading-relaxed">
 							Built with ASHA feedback for low-touch triage between home visits and PHC follow-ups.
 						</p>
-					</div>
-				</section>
+					</motion.div>
+				</motion.section>
 
-				<section className="space-y-10">
-					<div className="space-y-3 text-center">
-						<h2 className="text-3xl font-semibold">Core features</h2>
-						<p className="text-base text-slate-600">Condensed tools inspired by MediConnect's streamlined cards.</p>
-					</div>
-					<div className="grid gap-6 md:grid-cols-3">
+				{/* Core Features Section */}
+				<motion.section
+					initial="hidden"
+					whileInView="visible"
+					viewport={{ once: true, margin: "-100px" }}
+					variants={containerVariants}
+					className="space-y-8"
+				>
+					<motion.div variants={itemVariants} className="space-y-3 text-center">
+						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">Core features</h2>
+						<p className="text-base text-slate-600 max-w-2xl mx-auto">
+							Condensed tools inspired by MediConnect's streamlined cards.
+						</p>
+					</motion.div>
+					<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 						{[
 							{ title: "Risk scoring", copy: "Simple RAG triage based on 10 frontline observations." },
 							{ title: "Guided prompts", copy: "Step-by-step questions so helpers never miss critical signs." },
 							{ title: "Referral notes", copy: "Auto-generated summaries to hand over at the PHC." },
-						].map((feature) => (
-							<div key={feature.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg shadow-blue-100">
-								<h3 className="text-lg font-semibold text-slate-900">{feature.title}</h3>
-								<p className="mt-2 text-sm text-slate-600">{feature.copy}</p>
-							</div>
+						].map((feature, index) => (
+							<motion.div
+								key={feature.title}
+								variants={itemVariants}
+								whileHover={{ y: -4 }}
+								transition={{ duration: 0.2 }}
+								className="rounded-xl border border-slate-200 bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+							>
+								<h3 className="text-lg font-bold text-slate-900">{feature.title}</h3>
+								<p className="mt-3 text-sm text-slate-700 leading-relaxed">{feature.copy}</p>
+							</motion.div>
 						))}
 					</div>
-				</section>
+				</motion.section>
 
-				<section className="space-y-8">
-					<div className="space-y-2 text-center">
-						<h2 className="text-3xl font-semibold">Three-step workflow</h2>
-						<p className="text-base text-slate-600">Designed for rapid visits and limited connectivity.</p>
-					</div>
-					<ol className="grid gap-6 md:grid-cols-3">
+				{/* Three-Step Workflow Section */}
+				<motion.section
+					initial="hidden"
+					whileInView="visible"
+					viewport={{ once: true, margin: "-100px" }}
+					variants={containerVariants}
+					className="space-y-8"
+				>
+					<motion.div variants={itemVariants} className="space-y-3 text-center">
+						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">Three-step workflow</h2>
+						<p className="text-base text-slate-600 max-w-2xl mx-auto">
+							Designed for rapid visits and limited connectivity.
+						</p>
+					</motion.div>
+					<ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 						{[
 							"Capture vitals & symptoms",
 							"Review instant risk tier",
 							"Share referral or self-care",
 						].map((step, index) => (
-							<li key={step} className="relative rounded-2xl border border-slate-200 bg-white p-6 text-slate-700 shadow-lg shadow-blue-100">
-								<span className="absolute -top-4 left-6 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white shadow-lg shadow-blue-200">
+							<motion.li
+								key={step}
+								variants={itemVariants}
+								className="relative rounded-xl border border-slate-200 bg-white p-6 shadow-md"
+							>
+								<span className="absolute -top-4 left-6 flex h-12 w-12 items-center justify-center rounded-full bg-teal-600 text-lg font-bold text-white shadow-lg">
 									{index + 1}
 								</span>
-								<p className="pt-4 text-base font-medium text-slate-900">{step}</p>
-							</li>
+								<p className="pt-6 text-base font-semibold text-slate-900">{step}</p>
+							</motion.li>
 						))}
 					</ol>
-				</section>
+				</motion.section>
 
-				<section className="space-y-6">
-					<div className="space-y-2 text-center">
-						<h2 className="text-3xl font-semibold">Built for rural care teams</h2>
-						<p className="text-base text-slate-600">Lean personas keep the story grounded.</p>
-					</div>
-					<ul className="flex flex-wrap justify-center gap-3">
+				{/* Target Users Section */}
+				<motion.section
+					initial="hidden"
+					whileInView="visible"
+					viewport={{ once: true, margin: "-100px" }}
+					variants={containerVariants}
+					className="space-y-6"
+				>
+					<motion.div variants={itemVariants} className="space-y-3 text-center">
+						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">Built for rural care teams</h2>
+						<p className="text-base text-slate-600 max-w-2xl mx-auto">
+							Lean personas keep the story grounded.
+						</p>
+					</motion.div>
+					<motion.ul
+						variants={itemVariants}
+						className="flex flex-wrap justify-center gap-3"
+					>
 						{[
 							"ASHA & ANM workers",
 							"Community volunteers",
 							"Primary health centers",
 						].map((label) => (
-							<li key={label} className="rounded-full border border-blue-200 bg-blue-50 px-5 py-2 text-sm font-medium text-blue-700 shadow-sm">
+							<li
+								key={label}
+								className="rounded-full border-2 border-teal-200 bg-teal-50 px-6 py-3 text-sm font-semibold text-teal-800"
+							>
 								{label}
 							</li>
 						))}
-					</ul>
-				</section>
+					</motion.ul>
+				</motion.section>
 
-				<section>
-					<div className="rounded-3xl border border-blue-100 bg-linear-to-r from-blue-500 via-blue-400 to-blue-500 p-12 text-center shadow-2xl shadow-blue-200">
-						<h2 className="text-3xl font-semibold text-white">Ready to prioritise anemia care?</h2>
-						<p className="mt-3 text-base text-blue-50">Start the guided screening and surface high-risk cases early.</p>
+				{/* Call to Action Section */}
+				<motion.section
+					initial="hidden"
+					whileInView="visible"
+					viewport={{ once: true, margin: "-100px" }}
+					variants={itemVariants}
+				>
+					<div className="rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 p-8 text-center shadow-xl sm:p-12 lg:rounded-3xl">
+						<h2 className="text-2xl font-bold text-white sm:text-3xl">
+							Ready to prioritise anemia care?
+						</h2>
+						<p className="mt-3 text-base text-teal-50 max-w-2xl mx-auto">
+							Start the guided screening and surface high-risk cases early.
+						</p>
 						<div className="mt-8 flex justify-center">
 							<Link href="/screen">
-								<span className="inline-flex items-center justify-center rounded-full bg-white/90 px-10 py-3 text-base font-semibold text-blue-600 shadow-lg shadow-blue-300 transition hover:bg-white">
+								<motion.span
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+									className="inline-flex items-center justify-center rounded-lg bg-white px-10 py-4 text-base font-semibold text-teal-700 shadow-lg transition-colors hover:bg-teal-50 focus:outline-hidden focus:ring-4 focus:ring-white/50"
+								>
 									Start Screening
-								</span>
+								</motion.span>
 							</Link>
 						</div>
 					</div>
-				</section>
+				</motion.section>
 
-				<section className="space-y-8">
-					<div className="space-y-2 text-center">
-						<h2 className="text-3xl font-semibold text-slate-900">Common endemic disease FAQs</h2>
-						<p className="text-base text-slate-600">Equip conversations with quick facts tailored for Assam's frontline teams.</p>
-					</div>
-					<div className="mx-auto max-w-3xl space-y-4">
+				{/* FAQ Section */}
+				<motion.section
+					initial="hidden"
+					whileInView="visible"
+					viewport={{ once: true, margin: "-100px" }}
+					variants={containerVariants}
+					className="space-y-8"
+				>
+					<motion.div variants={itemVariants} className="space-y-3 text-center">
+						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+							Common endemic disease FAQs
+						</h2>
+						<p className="text-base text-slate-600 max-w-2xl mx-auto">
+							Equip conversations with quick facts tailored for Assam's frontline teams.
+						</p>
+					</motion.div>
+
+					<motion.div variants={itemVariants} className="mx-auto max-w-3xl space-y-3">
 						{faqs.map((faq, index) => {
 							const isOpen = activeIndex === index;
 							return (
-								<div key={faq.question} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-blue-100">
+								<motion.div
+									key={faq.question}
+									initial={false}
+									className="overflow-hidden rounded-xl border-2 border-slate-200 bg-white shadow-sm"
+								>
 									<button
 										type="button"
 										onClick={() => handleToggle(index)}
-										className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+										aria-expanded={isOpen}
+										className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition-colors hover:bg-slate-50 focus:outline-hidden focus:ring-4 focus:ring-teal-300 focus:ring-inset sm:px-6"
 									>
-										<span className="text-base font-semibold text-slate-900">{faq.question}</span>
-										<ChevronDown className={`h-5 w-5 text-blue-600 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+										<span className="text-base font-semibold text-slate-900 pr-2">
+											{faq.question}
+										</span>
+										<motion.div
+											animate={{ rotate: isOpen ? 180 : 0 }}
+											transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] as const }}
+										>
+											<ChevronDown className="h-5 w-5 flex-shrink-0 text-teal-600" aria-hidden="true" />
+										</motion.div>
 									</button>
-									{isOpen && (
-										<div className="border-t border-slate-100 px-6 pb-6 pt-4 text-sm text-slate-600">
-											{faq.answer}
-										</div>
-									)}
-								</div>
+									<AnimatePresence initial={false}>
+										{isOpen && (
+											<motion.div
+												initial={{ height: 0, opacity: 0 }}
+												animate={{ height: "auto", opacity: 1 }}
+												exit={{ height: 0, opacity: 0 }}
+												transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] as const }}
+											>
+												<div className="border-t-2 border-slate-100 px-5 pb-6 pt-4 text-sm text-slate-700 leading-relaxed sm:px-6">
+													{faq.answer}
+												</div>
+											</motion.div>
+										)}
+									</AnimatePresence>
+								</motion.div>
 							);
 						})}
-					</div>
-					<div className="mx-auto max-w-3xl rounded-2xl border border-blue-200 bg-blue-50 px-6 py-5 text-sm font-medium text-blue-700">
+					</motion.div>
+
+					<motion.div
+						variants={itemVariants}
+						className="mx-auto max-w-3xl rounded-xl border-2 border-teal-200 bg-teal-50 px-5 py-5 text-sm font-medium text-teal-900 leading-relaxed sm:px-6"
+						role="note"
+						aria-label="Endemic disease context for Assam"
+					>
 						Assam faces a high burden of endemic diseases such as malaria, Japanese encephalitis, dengue, filariasis, diarrhoeal diseases, tuberculosis, and scrub typhus, particularly in rural and flood-prone areas.
-					</div>
-				</section>
+					</motion.div>
+				</motion.section>
 			</main>
 		</div>
 	);
