@@ -3,7 +3,7 @@ import { findSimilarQuestions, storeConversation } from "@/lib/embeddings";
 import { supabase } from "@/lib/supabase";
 
 // Initialize Gemini with hardcoded API key for now
-const genAI = new GoogleGenerativeAI("AIzaSyCQtd3mHagegGMfne_G7RMAvR5QMuGe7BU");
+const genAI = new GoogleGenerativeAI("AIzaSyApW-bTa7qY4UZdHqszbgDE76W2k_8AH_s");
 
 // Get the chat model
 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
