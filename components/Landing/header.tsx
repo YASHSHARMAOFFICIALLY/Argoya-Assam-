@@ -120,10 +120,10 @@ export default function Header() {
 
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              {/* <Button variant="ghost" onClick={() => router.push("/auth")}>
-                Patient Login
-              </Button> */}
-              <Button onClick={() => router.push("/auth")}>
+              <Button variant="ghost" onClick={() => router.push("/signup")}>
+                Create Account
+              </Button>
+              <Button onClick={() => router.push("/signin")}>
                 Patient Login 
                 <MoveRight className="ml-2 h-4 w-4" />
               </Button>
@@ -179,20 +179,20 @@ export default function Header() {
                   variant="ghost"
                   className="w-full justify-start"
                   onClick={() => {
-                    router.push("/auth");
+                    router.push("/signup");
                     setIsOpen(false);
                   }}
                 >
-                  Patient Login
+                  Create Account
                 </Button>
                 <Button
                   className="w-full justify-start"
                   onClick={() => {
-                    router.push("/auth");
+                    router.push("/signin");
                     setIsOpen(false);
                   }}
                 >
-                  Find Care
+                  Patient Login
                   <MoveRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
