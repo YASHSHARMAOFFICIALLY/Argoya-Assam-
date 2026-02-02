@@ -20,7 +20,7 @@ export  default function Hero() {
 
             {/* Main Heading */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight">
-              Screening <span className="text-neutral-900">Anemia</span><br />
+              Screening <span className="text-red-600">Anemia</span><br />
               Without Lab Tests
             </h1>
 
@@ -49,7 +49,7 @@ export  default function Hero() {
             <div className="flex flex-col sm:flex-row gap-4">
               <a
                 href="/screen"
-                className="bg-white text-neutral-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-200 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 text-center"
+                className="bg-white text-red-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-200 shadow-[0_18px_45px_rgba(0,0,0,0.35)] hover:shadow-[0_22px_55px_rgba(0,0,0,0.4)] transform hover:-translate-y-1 text-center"
               >
                 Start Screening Now →
               </a>
@@ -89,11 +89,11 @@ export  default function Hero() {
             {/* Mockup Container */}
             <div className="relative">
               {/* Phone Mockup */}
-              <div className="relative mx-auto w-80 h-[600px] bg-gray-900 rounded-[3rem] p-3 shadow-2xl ring-8 ring-white/10">
+              <div className="relative mx-auto w-80 h-150 bg-gray-900 rounded-[3rem] p-3 shadow-2xl ring-8 ring-white/10">
                 {/* Screen */}
                 <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                   {/* App Screenshot Placeholder */}
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 h-full p-6 flex flex-col">
+                  <div className="bg-linear-to-br from-gray-50 to-gray-100 h-full p-6 flex flex-col">
                     <div className="text-center mb-6">
                       <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                         <span className="text-3xl">🩺</span>
