@@ -14,7 +14,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useRouter } from "next/navigation";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -75,7 +75,7 @@ export default function Header() {
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center shadow-lg">
               <FaHeart className="w-7 h-7 text-white" />
             </div>
-            <span className="text-xl font-bold">MediConnect</span>
+            <span className="text-xl font-bold">Yash </span>
           </Link>
 
           <div className="hidden md:flex md:items-center md:space-x-6">
@@ -120,11 +120,11 @@ export default function Header() {
 
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              <Button variant="ghost" onClick={() => router.push("/auth")}>
+              {/* <Button variant="ghost" onClick={() => router.push("/auth")}>
                 Patient Login
-              </Button>
+              </Button> */}
               <Button onClick={() => router.push("/auth")}>
-                Find Care
+                Patient Login 
                 <MoveRight className="ml-2 h-4 w-4" />
               </Button>
             </div>

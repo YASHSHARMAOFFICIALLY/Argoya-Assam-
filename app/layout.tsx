@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from 'next/font/google';
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -25,12 +26,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${manrope.variable} ${inter.variable} antialiased`}
-      >
-      <main className="bg-background text-foreground min-h-screen">{children}</main>
-       
+        className={`${manrope.variable} ${inter.variable} antialiased `}>
+        <ThemeProvider
+         attribute= "class" 
+         defaultTheme="system"
+         enableSystem
+         disableTransitionOnChange
+          >
+          <main className="bg-background text-foreground min-h-screen">{children}</main>
+        </ThemeProvider>
+  
       </body>
     </html>
   );
