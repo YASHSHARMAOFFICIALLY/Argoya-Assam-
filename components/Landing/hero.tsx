@@ -48,14 +48,14 @@ export  default function Hero() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <a 
-                href="#get-started" 
+              <a
+                href="/screen"
                 className="bg-white text-neutral-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-200 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 text-center"
               >
                 Start Screening Now →
               </a>
-              <a 
-                href="#how-it-works" 
+              <a
+                href="/screen"
                 className="bg-white/10 backdrop-blur-sm text-neutral-900 px-8 py-4 rounded-lg font-bold text-lg border-2 border-white/30 hover:bg-white/20 transition-all duration-200 text-center"
               >
                 Watch How It Works
