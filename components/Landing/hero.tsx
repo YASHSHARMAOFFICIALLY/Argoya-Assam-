@@ -1,14 +1,6 @@
-import React from 'react'
-export default function Home(){
-  return (
-    <div>
-      <Hero></Hero>
-      <Problem></Problem>
-    </div>
-  )
-}
 
-export function Hero() {
+
+export  default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900">
       {/* Animated Background Pattern */}
