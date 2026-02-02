@@ -92,10 +92,10 @@ export default function SignInPage() {
 
 	return (
 		<div className="relative min-h-screen overflow-hidden bg-blue-50">
-			<div className="absolute inset-0 bg-[url('/background.jpg')] bg-cover bg-center bg-no-repeat opacity-70" />
-			<div className="absolute inset-0 bg-linear-to-br from-blue-100/90 via-blue-50/70 to-white/90" />
+
+			<div className="absolute inset-0 bg-linear-to-br from-blue-100/10 via-blue-50/5 to-white/15" />
 			<div className="relative z-10 flex min-h-screen items-center justify-center p-4">
-				<div className="w-full max-w-sm rounded-2xl border border-white/60 bg-white/85 p-8 shadow-[0_20px_40px_rgba(15,23,42,0.25)] backdrop-blur-md transition-transform duration-300 hover:scale-[1.02]">
+				<div className="w-full max-w-sm rounded-2xl border border-white/25 bg-white p-8 shadow-[0_20px_40px_rgba(15,23,42,0.25)] backdrop-blur-xl transition-transform duration-300 hover:scale-[1.02]">
 					<h1 className="mb-2 text-center text-3xl font-bold text-slate-900">Sign In</h1>
 					<p className="mb-6 text-center text-sm text-slate-600">Welcome back! Please enter your details</p>
 
