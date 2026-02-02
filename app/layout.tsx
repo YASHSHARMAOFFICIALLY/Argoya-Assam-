@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from 'next/font/google';
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import Footer from "@/components/Landing/footer";
+import Header from "@/components/Landing/header";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -35,9 +37,16 @@ export default function RootLayout({
          enableSystem
          disableTransitionOnChange
           >
-          <main className="bg-background text-foreground min-h-screen">{children}</main>
+           <div className="flex flex-col min-h-screen">
+            <Header />
+            {/* The flex-1 class ensures the main area grows to fill space, 
+                pushing the footer to the bottom */}
+            <main className="flex-1 bg-background text-foreground">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </ThemeProvider>
-  
       </body>
     </html>
   );
