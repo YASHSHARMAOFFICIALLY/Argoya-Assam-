@@ -433,7 +433,7 @@ function HospitalSkeleton() {
                 <Button
                 
                   className="w-full bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20 gap-2 h-11 rounded-xl"
-                  onClick={() => handleChatClick(hospital.id)}
+                  onClick={() => handleChatClick(hospital.id,hospital.name)}
                 >
                   <MessageSquare className="w-4 h-4" />
                   Chat with Hospital
