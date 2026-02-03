@@ -20,7 +20,7 @@ function ChatContent() {
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: "assistant", 
-      content: "Hello! I am the MediConnect AI assistant. How can I help you connect with this hospital today?" 
+      content: "Hello! I am the Your  AI assistant. How can I help you connect with this hospital todaay?" 
     }
   ]);
   const [input, setInput] = useState("");
