@@ -165,7 +165,7 @@ function normalizeRisk(value?: string | null) {
 							<div className="flex items-center gap-2">
 								<CheckCircle2 className="w-5 h-5 text-green-600" />
 								<span className="font-semibold text-green-800">
-									Low Risk Detected
+									Low Risk of <span className="font-bold">Anemia </span> Detected 
 								</span>
 							</div>
 							<p className="text-sm text-green-700">
