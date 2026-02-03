@@ -144,10 +144,10 @@ export default function Problem() {
           
             <span className="text-4xl font-bold text-primary-700 text-center uppercase tracking-normal">Problem</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-slate-900 leading-tight">
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-slate-900 leading-tigh">
             Anemia is a <span className=" bg-clip-text bg-gradient-to-r text-red-600 from-primary-600 to-primary-800">Silent Epidemic</span>
           </h2>
-          <p className="text-lg text-slate-600 mt-6 leading-relaxed">
+          <p className="text-lg text-slate-600 mt-6 leading-relaxed ">
             Despite being preventable, millions of women in rural Assam suffer due to systemic barriers that our smartphone technology eliminates.
           </p>
         </div>
@@ -164,9 +164,9 @@ export default function Problem() {
                 {item.icon}
               </div>
               
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">{item.title}</h3>
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2 ">{item.title}</h3>
               <div className={`text-4xl font-black mb-4 ${item.accent}`}>{item.stat}</div>
-              <p className="text-slate-600 text-sm leading-relaxed">{item.description}</p>
+              <p className="text-slate-600 text-sm leading-relaxed ">{item.description}</p>
               
               {/* Subtle Decorative Line */}
               <div className="absolute bottom-0 left-8 right-8 h-1 bg-gradient-to-r from-transparent via-slate-100 to-transparent"></div>
