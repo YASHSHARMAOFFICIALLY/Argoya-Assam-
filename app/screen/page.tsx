@@ -662,7 +662,7 @@ export default function ScreenPage() {
           {/* 7. PALLOR (EYE/LIPS) */}
           <QuestionCard title="Color of Nails/Lips" assamese="নখ বা ওঁঠৰ ৰং" icon={Eye}>
             <div className="flex gap-3">
-              {["none", "mild", "severe"].map((p) => (
+              {["pink", "pale", "very pale"].map((p) => (
                 <button
                   key={p}
                   onClick={() => setForm({...form, pallor: p as any})}
