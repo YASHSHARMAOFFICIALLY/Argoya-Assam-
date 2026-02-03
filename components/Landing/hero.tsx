@@ -53,12 +53,7 @@ export  default function Hero() {
               >
                 Start Screening Now →
               </a>
-              <a
-                href="/screen"
-                className="bg-white/10 backdrop-blur-sm text-neutral-900 px-8 py-4 rounded-lg font-bold text-lg border-2 border-white/30 hover:bg-white/20 transition-all duration-200 text-center dark:text-white"
-              >
-                Watch How It Works
-              </a>
+              
             </div>
 
             {/* Trust Indicators */}
