@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  FaHeart,
   FaFacebookF,
   FaTwitter,
   FaInstagram,
@@ -10,6 +9,7 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -25,12 +25,17 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-xl">
-                <FaHeart className="w-7 h-7 text-white" />
+              <div className="relative w-12 h-12">
+                <Image
+                  src="/logo.png"
+                  alt="Arogya Assam Logo"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-white">
-                  Yash
+                  Arogya Assam
                 </span>
                 <span className="text-xs text-slate-400">
                   Anemia Screening Platform

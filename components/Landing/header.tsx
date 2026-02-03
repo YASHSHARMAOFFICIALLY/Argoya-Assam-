@@ -14,7 +14,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useRouter } from "next/navigation";
-import { FaHeart } from "react-icons/fa6";
+import Image from "next/image";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,11 +71,18 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <nav className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center shadow-lg">
-              <FaHeart className="w-7 h-7 text-white" />
+          <Link href="/" className="flex items-center space-x-1 -gap-10">
+            <div className="relative w-12 h-12">
+              <Image
+                src="/logo.png"
+                alt="Arogya Assam Logo"
+                fill
+                className="w-12 h-12"
+                priority
+                unoptimized
+              />
             </div>
-            <span className="text-xl font-semibold tracking-tight">Yash </span>
+            <span className="text-xl font-semibold tracking-tight">Arogya Assam </span>
           </Link>
 
           <div className="hidden md:flex md:items-center md:space-x-6">
@@ -89,7 +96,7 @@ export default function Header() {
                           {item.title}
                         </NavigationMenuTrigger>
                         <NavigationMenuContent>
-                          <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
+                          <ul className="grid w-100 gap-3 p-4 md:w-125 md:grid-cols-2">
                             {item.items.map((subItem) => (
                               <li key={subItem.title}>
                                 <Link
