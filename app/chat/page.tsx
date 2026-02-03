@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Send, ArrowLeft, Hospital, Bot, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,12 +11,12 @@ interface Message {
   content: string;
 }
 
-export default function ChatPage() {
+// 1. Move the chat logic into a sub-component
+function ChatContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hospitalId = searchParams.get("id");
   
-  // State for messages and input
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: "assistant", 
@@ -25,41 +26,34 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   
-  // Auto-scroll to bottom of chat
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   useEffect(scrollToBottom, [messages]);
 
-  // Handle sending a message
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || loading) return;
 
     const userMessage = input.trim();
     setInput("");
-    
-    // 1. Add User Message to UI
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setLoading(true);
 
     try {
-      // 2. Call your API Route
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           message: userMessage,
-          hospitalId: hospitalId // Passing this so you can use it in the backend later if needed
+          hospitalId: hospitalId 
         }),
       });
 
       const data = await response.json();
-
       if (!response.ok) throw new Error(data.error || "Failed to fetch");
 
-      // 3. Add AI Response to UI
       setMessages((prev) => [
         ...prev, 
         { role: "assistant", content: data.response }
@@ -135,7 +129,6 @@ export default function ChatPage() {
           </div>
         ))}
         
-        {/* Loading Indicator */}
         {loading && (
           <div className="flex items-center gap-2 text-slate-400 text-xs ml-12">
             <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
@@ -170,4 +163,15 @@ export default function ChatPage() {
   );
 }
 
-
+// 2. The main page export now just wraps ChatContent in Suspense
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center bg-slate-50 text-slate-500">
+        Loading Chat...
+      </div>
+    }>
+      <ChatContent />
+    </Suspense>
+  );
+}
