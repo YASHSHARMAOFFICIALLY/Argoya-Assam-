@@ -295,9 +295,10 @@ function HospitalSkeleton() {
     }
   };
 
-  const handleChatClick = (hospitalId: string) => {
+  const handleChatClick = (hospitalId: string, hospitalName: string) => {
+    const encodedName = encodeURIComponent(hospitalName);
   
-  router.push(`/chat?id=${hospitalId}`); 
+  router.push(`/chat?id=${hospitalId}&name=${encodedName}`); 
 };
 
   // --- STATE 1: SEARCH VIEW (Hero Section) ---
