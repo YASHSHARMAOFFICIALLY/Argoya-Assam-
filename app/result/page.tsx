@@ -1,6 +1,18 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import {
+	CheckCircle2,
+	AlertTriangle,
+	AlertCircle,
+	Activity,
+	ArrowRight,
+	Sparkles,
+	FileText,
+	Stethoscope,
+	MapPin,
+} from "lucide-react";
 
 function normalizeRisk(value?: string | null) {
 	if (!value) {
@@ -16,45 +28,223 @@ export default function ResultPage() {
 	const score = Number.isNaN(scoreValue) ? 0 : scoreValue;
 	const risk = normalizeRisk(params.get("risk"));
 	const isHighRisk = risk === "High";
+	const isMediumRisk = risk === "Medium";
+	const isLowRisk = risk === "Low";
+
+	// Determine risk color and icon
+	const getRiskConfig = () => {
+		if (isHighRisk) {
+			return {
+				color: "red",
+				icon: AlertCircle,
+				gradient: "from-red-600 via-rose-600 to-pink-600",
+				bgGradient: "from-red-50 via-rose-50 to-pink-50",
+				borderColor: "border-red-300",
+				textColor: "text-red-700",
+				bgColor: "bg-red-50",
+			};
+		} else if (isMediumRisk) {
+			return {
+				color: "orange",
+				icon: AlertTriangle,
+				gradient: "from-orange-600 via-amber-600 to-yellow-600",
+				bgGradient: "from-orange-50 via-amber-50 to-yellow-50",
+				borderColor: "border-orange-300",
+				textColor: "text-orange-700",
+				bgColor: "bg-orange-50",
+			};
+		} else {
+			return {
+				color: "green",
+				icon: CheckCircle2,
+				gradient: "from-green-600 via-emerald-600 to-teal-600",
+				bgGradient: "from-green-50 via-emerald-50 to-teal-50",
+				borderColor: "border-green-300",
+				textColor: "text-green-700",
+				bgColor: "bg-green-50",
+			};
+		}
+	};
+
+	const config = getRiskConfig();
+	const RiskIcon = config.icon;
 
 	return (
-		<div className="relative min-h-screen bg-linear-to-br from-blue-50 via-white to-blue-100">
-			<div className="mx-auto flex min-h-screen w-full max-w-2xl flex-col justify-center gap-10 px-6 py-16">
-				<div className="space-y-3 text-center">
-					<h1 className="text-3xl font-semibold text-slate-900">Screening Summary</h1>
-					<p className="text-base text-slate-600">Review the automated risk calculation before advising next steps.</p>
+		<div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-pink-50">
+			{/* Animated background elements */}
+			<div className="absolute inset-0 overflow-hidden pointer-events-none">
+				<div className="absolute top-20 left-10 w-72 h-72 bg-red-300/20 rounded-full blur-3xl animate-pulse" />
+				<div className="absolute bottom-20 right-10 w-96 h-96 bg-rose-300/20 rounded-full blur-3xl animate-pulse delay-1000" />
+			</div>
+
+			<div className="relative z-10 mx-auto flex min-h-screen w-full max-w-3xl flex-col justify-center gap-8 px-6 py-16">
+				{/* Header */}
+				<div className="text-center space-y-3">
+					<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md mb-4">
+						<Sparkles className="w-5 h-5 text-red-600" />
+						<span className="text-sm font-semibold text-slate-700">
+							Screening Complete
+						</span>
+					</div>
+					<h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 bg-clip-text text-transparent">
+						Screening Results
+					</h1>
+					<p className="text-slate-600 max-w-xl mx-auto">
+						Review the automated risk calculation and recommended next steps
+					</p>
 				</div>
 
-				<div className="grid gap-6 rounded-3xl border border-blue-100 bg-white/80 p-8 shadow-xl shadow-blue-100 backdrop-blur">
-					<div className="flex flex-col gap-2 text-center">
-						<span className="text-sm font-medium text-slate-700">Total score (0-100)</span>
-						<span className="text-4xl font-semibold text-blue-700">{score}</span>
+				{/* Main Results Card */}
+				<div className="rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm p-8 shadow-xl space-y-6">
+					{/* Score Display */}
+					<div className="text-center space-y-4">
+						<div className="flex justify-center">
+							<div className={`w-20 h-20 rounded-full bg-gradient-to-br ${config.gradient} flex items-center justify-center shadow-lg`}>
+								<RiskIcon className="w-10 h-10 text-white" />
+							</div>
+						</div>
+
+						<div>
+							<p className="text-sm font-medium text-slate-600 mb-2">
+								Total Score
+							</p>
+							<div className="relative inline-block">
+								<span className={`text-6xl font-bold bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent`}>
+									{score}
+								</span>
+								<span className="text-2xl text-slate-400 ml-1">/100</span>
+							</div>
+						</div>
+
+						<div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full ${config.bgColor} border ${config.borderColor}`}>
+							<Activity className={`w-5 h-5 ${config.textColor}`} />
+							<span className={`text-lg font-semibold ${config.textColor}`}>
+								{risk} Risk
+							</span>
+						</div>
 					</div>
 
-					<div className="flex flex-col gap-2 text-center">
-						<span className="text-sm font-medium text-slate-700">Risk category</span>
-						<span className={`text-2xl font-semibold ${isHighRisk ? "text-red-600" : "text-blue-900"}`}>{risk}</span>
-					</div>
+					{/* Divider */}
+					<div className="border-t border-slate-200" />
 
+					{/* Risk Assessment */}
 					{isHighRisk && (
-						<div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-							<span className="font-semibold">Immediate care required</span>
-							<p>High risk detected—consult a doctor or hospital immediately.</p>
+						<div className="rounded-2xl border border-red-300 bg-red-50 p-5 space-y-2">
+							<div className="flex items-center gap-2">
+								<AlertCircle className="w-5 h-5 text-red-600" />
+								<span className="font-semibold text-red-800">
+									Immediate Care Required
+								</span>
+							</div>
+							<p className="text-sm text-red-700">
+								High risk of anemia detected. Please consult a healthcare
+								professional or visit a hospital immediately for proper
+								diagnosis and treatment.
+							</p>
 						</div>
 					)}
 
-					<div className="rounded-2xl bg-blue-50/80 p-4 text-sm text-blue-800">
-						<span className="font-semibold">Next actions</span>
-						<p>Confirm results with clinical judgment. Consider lab work for medium or high risk. For low risk, provide routine follow-up guidance.</p>
+					{isMediumRisk && (
+						<div className="rounded-2xl border border-orange-300 bg-orange-50 p-5 space-y-2">
+							<div className="flex items-center gap-2">
+								<AlertTriangle className="w-5 h-5 text-orange-600" />
+								<span className="font-semibold text-orange-800">
+									Medical Consultation Recommended
+								</span>
+							</div>
+							<p className="text-sm text-orange-700">
+								Medium risk detected. Schedule an appointment with a healthcare
+								provider for further evaluation and possible lab tests.
+							</p>
+						</div>
+					)}
+
+					{isLowRisk && (
+						<div className="rounded-2xl border border-green-300 bg-green-50 p-5 space-y-2">
+							<div className="flex items-center gap-2">
+								<CheckCircle2 className="w-5 h-5 text-green-600" />
+								<span className="font-semibold text-green-800">
+									Low Risk Detected
+								</span>
+							</div>
+							<p className="text-sm text-green-700">
+								Current symptoms suggest low risk of anemia. Continue
+								maintaining a healthy diet rich in iron and follow routine
+								health check-ups.
+							</p>
+						</div>
+					)}
+
+					{/* Next Actions */}
+					<div className="rounded-2xl bg-slate-50 border border-slate-200 p-5 space-y-3">
+						<div className="flex items-center gap-2">
+							<Stethoscope className="w-5 h-5 text-red-600" />
+							<span className="font-semibold text-slate-800">
+								Recommended Next Steps
+							</span>
+						</div>
+						<ul className="space-y-2 text-sm text-slate-700">
+							<li className="flex items-start gap-2">
+								<ArrowRight className="w-4 h-4 mt-0.5 text-red-600 flex-shrink-0" />
+								<span>
+									Confirm results with clinical judgment and patient history
+								</span>
+							</li>
+							<li className="flex items-start gap-2">
+								<ArrowRight className="w-4 h-4 mt-0.5 text-red-600 flex-shrink-0" />
+								<span>
+									Consider complete blood count (CBC) test for {isHighRisk ? "high" : isMediumRisk ? "medium" : "low"} risk cases
+								</span>
+							</li>
+							<li className="flex items-start gap-2">
+								<ArrowRight className="w-4 h-4 mt-0.5 text-red-600 flex-shrink-0" />
+								<span>
+									Provide dietary guidance on iron-rich foods
+								</span>
+							</li>
+							<li className="flex items-start gap-2">
+								<ArrowRight className="w-4 h-4 mt-0.5 text-red-600 flex-shrink-0" />
+								<span>
+									Schedule follow-up based on risk level and symptoms
+								</span>
+							</li>
+						</ul>
 					</div>
 
-					<a
-						href="/screen"
-						className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-500"
-					>
-						Run Another Screening
-					</a>
+					{/* Action Buttons */}
+					<div className="flex flex-col gap-3 pt-2">
+						<Link
+							href="/screen"
+							className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 px-6 py-3.5 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
+						>
+							<Activity className="w-5 h-5" />
+							Run Another Screening
+						</Link>
+
+						<Link
+							href="/hospitals"
+							className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-600 via-pink-600 to-red-600 px-6 py-3.5 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
+						>
+							<MapPin className="w-5 h-5" />
+							Find Nearby Hospital
+						</Link>
+
+						<button
+							onClick={() => window.print()}
+							className="w-full inline-flex items-center justify-center gap-2 rounded-full border-2 border-red-600 bg-white px-6 py-3.5 text-red-600 font-semibold hover:bg-red-50 transition-all duration-300"
+						>
+							<FileText className="w-5 h-5" />
+							Print Results
+						</button>
+					</div>
 				</div>
+
+				{/* Disclaimer */}
+				<p className="text-xs text-center text-slate-500 max-w-2xl mx-auto">
+					This is an automated screening tool and not a medical diagnosis.
+					Results should be confirmed by a qualified healthcare professional
+					with appropriate laboratory tests.
+				</p>
 			</div>
 		</div>
 	);
