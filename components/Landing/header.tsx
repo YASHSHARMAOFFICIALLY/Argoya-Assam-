@@ -119,7 +119,7 @@ export default function Header() {
             </NavigationMenu>
 
             <div className="flex items-center space-x-4">
-              {/* <ThemeToggle /> */}
+              <ThemeToggle />
               <Button variant="ghost" onClick={() => router.push("/signup")}>
                 Create Account
               </Button>
