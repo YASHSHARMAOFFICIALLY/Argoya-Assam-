@@ -1,13 +1,12 @@
-import { GoogleGenerativeAI ,HarmCategory, HarmBlockThreshold} from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { findSimilarQuestions, storeConversation } from "@/lib/embeddings";
 import { supabase } from "@/lib/supabase";
 
-// Initialize Gemini with hardcoded API key for now
+// Initialize Gemini
 const genAI = new GoogleGenerativeAI("AIzaSyBq-1d5V_jPgv2Agww6nmYRgJyQrW6I7CI");
 
-// Get the chat model
 const model = genAI.getGenerativeModel({
-  model: "gemini-flash-latest",
+  model: "gemini-1.5-flash", // Updated to the current stable flash model name
   systemInstruction: {
     role: "system",
     parts: [{ text: `
@@ -22,22 +21,10 @@ const model = genAI.getGenerativeModel({
     `}],
   },
   safetySettings: [
-    {
-      category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
-    {
-      category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
-    {
-      category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
-    {
-      category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-      threshold: HarmBlockThreshold.BLOCK_NONE,
-    },
+    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
   ],
 });
 
@@ -49,124 +36,82 @@ async function checkForAnswer(question: string) {
     .limit(1)
     .single();
 
-  if (error || !conversations) {
-    return null;
-  }
-
+  if (error || !conversations) return null;
   return conversations.answer;
 }
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { message, hospitalId,hospitalName} = body; // Correctly destructure both
+    const { message, hospitalId, hospitalName } = body; 
 
     console.log("Processing question for Hospital:", hospitalId);
 
-    // First check for similar questions in the database
+    // 1. Check Database for Similar Questions
     try {
-      const similarQuestion = await findSimilarQuestions(question);
+      const similarQuestion = await findSimilarQuestions(message);
       if (similarQuestion) {
-        console.log("Found similar question:", similarQuestion);
         return new Response(
-          JSON.stringify({
-            response: similarQuestion.answer,
-            source: "database",
-          }),
-          {
-            headers: { "Content-Type": "application/json" },
-          }
+          JSON.stringify({ response: similarQuestion.answer, source: "database" }),
+          { headers: { "Content-Type": "application/json" } }
         );
       }
     } catch (dbError) {
-      console.warn("Database lookup failed, falling back to AI:", dbError);
+      console.warn("Database lookup failed:", dbError);
     }
 
-    // Check if this question has been answered by staff
+    // 2. Check for Staff Answers
     try {
-      const staffAnswer = await checkForAnswer(question);
+      const staffAnswer = await checkForAnswer(message);
       if (staffAnswer) {
         return new Response(
-          JSON.stringify({
-            response: staffAnswer,
-            source: "staff",
-          }),
-          {
-            headers: { "Content-Type": "application/json" },
-          }
+          JSON.stringify({ response: staffAnswer, source: "staff" }),
+          { headers: { "Content-Type": "application/json" } }
         );
       }
     } catch (dbError) {
-      console.warn("Staff answer lookup failed, falling back to AI:", dbError);
-    // --- STEP 1: Check Database First (Efficiency) ---
-    
-    // Check for similar questions
-    const similarQuestion = await findSimilarQuestions(message);
-    if (similarQuestion) {
-      return new Response(JSON.stringify({
-        response: similarQuestion.answer,
-        source: "database",
-      }));
+      console.warn("Staff answer lookup failed:", dbError);
     }
 
-    // Check for staff answers
-    const staffAnswer = await checkForAnswer(message);
-    if (staffAnswer) {
-      return new Response(JSON.stringify({
-        response: staffAnswer,
-        source: "staff",
-      }));
-    }
-
-    // --- STEP 2: If not found, use Gemini ---
-
+    // 3. Use Gemini if no database match found
     const chat = model.startChat({
       generationConfig: {
         temperature: 0.5,
-        maxOutputTokens: 500, // Keeps it "short and to the point" as requested
+        maxOutputTokens: 500,
       },
     });
 
-    // Provide the hospital context so Gemini knows which hospital it's representing
     const promptWithContext = `
-Context: You are the assistant for ${hospitalName || 'the hospital'} (ID: ${hospitalId}). 
-Rule: Always refer to the hospital by its name, not its ID number.
-User Question: ${message}`;
+      Context: You are the assistant for ${hospitalName || 'the hospital'} (ID: ${hospitalId}). 
+      Rule: Always refer to the hospital by its name, not its ID number.
+      User Question: ${message}`;
+
     const result = await chat.sendMessage(promptWithContext);
     const response = await result.response;
     const answer = response.text();
 
     if (!answer) throw new Error("Empty response from Gemini");
 
-    return new Response(JSON.stringify({
-      response: answer,
-      source: "gemini",
-    }));
+    // 4. Optional: Store the new conversation for future similarity matches
+    try {
+      await storeConversation(message, answer);
+    } catch (storeError) {
+      console.warn("Failed to store conversation:", storeError);
+    }
 
     return new Response(
-      JSON.stringify({
-        response: answer,
-        source: "gemini",
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-      }
+      JSON.stringify({ response: answer, source: "gemini" }),
+      { headers: { "Content-Type": "application/json" } }
     );
+
   } catch (error) {
     console.error("Error in chat route:", error);
     return new Response(
-      JSON.stringify({
+      JSON.stringify({ 
         error: "Failed to process request",
-        details: error instanceof Error ? error.message : String(error),
+        details: error instanceof Error ? error.message : String(error) 
       }),
-      { 
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-  } catch (error) {
-    console.error("Error in chat route:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to process request" }),
-      { status: 500 }
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
