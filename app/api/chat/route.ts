@@ -62,6 +62,41 @@ export async function POST(req: Request) {
 
     console.log("Processing question for Hospital:", hospitalId);
 
+    // First check for similar questions in the database
+    try {
+      const similarQuestion = await findSimilarQuestions(question);
+      if (similarQuestion) {
+        console.log("Found similar question:", similarQuestion);
+        return new Response(
+          JSON.stringify({
+            response: similarQuestion.answer,
+            source: "database",
+          }),
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+    } catch (dbError) {
+      console.warn("Database lookup failed, falling back to AI:", dbError);
+    }
+
+    // Check if this question has been answered by staff
+    try {
+      const staffAnswer = await checkForAnswer(question);
+      if (staffAnswer) {
+        return new Response(
+          JSON.stringify({
+            response: staffAnswer,
+            source: "staff",
+          }),
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+    } catch (dbError) {
+      console.warn("Staff answer lookup failed, falling back to AI:", dbError);
     // --- STEP 1: Check Database First (Efficiency) ---
     
     // Check for similar questions
@@ -107,6 +142,26 @@ User Question: ${message}`;
       source: "gemini",
     }));
 
+    return new Response(
+      JSON.stringify({
+        response: answer,
+        source: "gemini",
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("Error in chat route:", error);
+    return new Response(
+      JSON.stringify({
+        error: "Failed to process request",
+        details: error instanceof Error ? error.message : String(error),
+      }),
+      { 
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
   } catch (error) {
     console.error("Error in chat route:", error);
     return new Response(
