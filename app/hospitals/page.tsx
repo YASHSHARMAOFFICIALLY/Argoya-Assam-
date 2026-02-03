@@ -296,8 +296,9 @@ export default function HospitalsContent() {
   };
 
   const handleChatClick = (hospitalId: string) => {
-    router.push(`/api${hospitalId}`);
-  };
+  
+  router.push(`/chat?id=${hospitalId}`); 
+};
 
   // --- STATE 1: SEARCH VIEW (Hero Section) ---
   if (!pincode) {
@@ -429,7 +430,7 @@ export default function HospitalsContent() {
                 </div>
 
                 <Button
-                  href ="api/chat"
+                
                   className="w-full bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20 gap-2 h-11 rounded-xl"
                   onClick={() => handleChatClick(hospital.id)}
                 >
