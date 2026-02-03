@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 function normalizeRisk(value?: string | null) {
 	if (!value) {
@@ -10,7 +11,7 @@ function normalizeRisk(value?: string | null) {
 	return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 }
 
-export default function ResultPage() {
+ function ResultContent() {
 	const params = useSearchParams();
 	const scoreValue = Number(params.get("score") ?? 0);
 	const score = Number.isNaN(scoreValue) ? 0 : scoreValue;
@@ -58,4 +59,12 @@ export default function ResultPage() {
 			</div>
 		</div>
 	);
+}
+
+export default function ResultPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading result...</div>}>
+      <ResultContent />
+    </Suspense>
+  );
 }

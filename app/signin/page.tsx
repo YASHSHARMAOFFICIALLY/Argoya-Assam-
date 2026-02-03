@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LogIn, Mail, Lock, Sparkles } from "lucide-react";
+import { Suspense } from "react";
 
 const adjectives = [
 	"Caring",
@@ -35,7 +36,7 @@ const generateAlias = () => {
 
 const aliasStorageKey = "alias";
 
-export default function SignInPage() {
+ function SignInPage() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const [formData, setFormData] = useState({ email: "", password: "" });
@@ -224,4 +225,13 @@ export default function SignInPage() {
 			</div>
 		</div>
 	);
+}
+
+
+export default function SignInPagee() {
+	return (
+		<Suspense fallback={<div>Loading Sign In...</div>}>
+      <SignInPage />
+    </Suspense>
+	)
 }

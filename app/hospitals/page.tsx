@@ -187,7 +187,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState,Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { 
@@ -231,7 +231,7 @@ function HospitalSkeleton() {
   );
 }
 
-export default function HospitalsContent() {
+ function HospitalsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [hospitals, setHospitals] = useState<HospitalData[]>([]);
@@ -443,5 +443,22 @@ export default function HospitalsContent() {
         )}
       </div>
     </div>
+  );
+}
+
+// This is the new entry point for the page
+export default function HospitalsPage() {
+  return (
+    <Suspense fallback={
+      <div className="container max-w-5xl mx-auto pt-28 px-4 space-y-6">
+        <div className="h-8 bg-slate-200 rounded w-64 animate-pulse mb-8" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-6 rounded-xl border bg-white h-40 animate-pulse" />
+          <div className="p-6 rounded-xl border bg-white h-40 animate-pulse" />
+        </div>
+      </div>
+    }>
+      <HospitalsContent />
+    </Suspense>
   );
 }
