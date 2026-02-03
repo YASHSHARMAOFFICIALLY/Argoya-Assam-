@@ -20,7 +20,7 @@ export  default function Hero() {
 
             {/* Main Heading */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight dark:text-white">
-              Screening <span className="text-red-600">Anemia</span><br />
+              Screening <span className="text-red-600">Endemic Diseases</span><br />
               Without Lab Tests
             </h1>
 
