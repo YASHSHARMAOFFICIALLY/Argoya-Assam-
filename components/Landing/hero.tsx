@@ -118,7 +118,7 @@ export  default function Hero() {
                           <button 
                             key={num}
                             className={`py-3 px-4 rounded-lg font-semibold ${
-                              num === 2 
+                              num === 10
                                 ? 'bg-primary-600 text-white' 
                                 : 'bg-gray-100 text-gray-700'
                             }`}

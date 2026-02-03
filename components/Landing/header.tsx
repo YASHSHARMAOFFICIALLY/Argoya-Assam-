@@ -130,7 +130,9 @@ export default function Header() {
               <Button variant="ghost" onClick={() => router.push("/signup")}>
                 Create Account
               </Button>
-              <Button onClick={() => router.push("/signin")}>
+              <Button className="shadow-[0px_0px_2px_1px_rgba(255,255,255,0.2)_inset]
+              text-shadow-sm text-shadow-white/10 ring ring-white/20 cursor-pointer"
+              onClick={() => router.push("/signin")}>
                 Patient Login 
                 <MoveRight className="ml-2 h-4 w-4" />
               </Button>
