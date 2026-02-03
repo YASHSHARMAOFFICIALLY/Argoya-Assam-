@@ -214,9 +214,9 @@ export default function Solution() {
                   {/* Key Features */}
                   <div className="space-y-1 mb-7">
                     {[
-                      { icon: "📝", title: "15 Smart Questions", desc: "WHO-aligned clinical flow" },
+                      { icon: "📝", title: "10 Smart Questions", desc: "WHO-aligned clinical flow" },
                       { icon: "🧠", title: "Instant AI Risk Score", desc: "0–100 probability estimate" },
-                      { icon: "📶", title: "Offline-first", desc: "Works anywhere, syncs later" },
+                      { icon: "📶", title: "Printable Result ", desc: "Store Result for Further Assignment" },
                     ].map((item, i) => (
                       <div
                         key={i}
