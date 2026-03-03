@@ -32,7 +32,7 @@ export default function Problem() {
 
   return (
     // Added dark:bg-slate-900
-    <section id="problem" className="py-24 bg-slate-50 dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
+    <section id="problem" className="py-24 bg-slate-50 bg-linear-to-b dark:from-[#0a0f1d] dark:to-[#0a0f1d] relative overflow-hidden transition-colors duration-300">
       
       {/* Adjusted Opacity for Dark Mode decorative elements */}
       <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-100/50 dark:bg-primary-900/20 blur-[120px] rounded-full -z-10"></div>
