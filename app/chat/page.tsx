@@ -62,7 +62,7 @@ function ChatContent() {
       console.error(error);
       setMessages((prev) => [
         ...prev, 
-        { role: "assistant", content: "Sorry, I'm having trouble connecting right now. Please try again." }
+        { role: "assistant", content: "Sorry, I'm having trouble connecting right now. Please try againnn." }
       ]);
     } finally {
       setLoading(false);

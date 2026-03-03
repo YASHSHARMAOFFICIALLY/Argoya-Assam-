@@ -3,22 +3,22 @@ import { findSimilarQuestions, storeConversation } from "@/lib/embeddings";
 import { supabase } from "@/lib/supabase";
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI("AIzaSyBq-1d5V_jPgv2Agww6nmYRgJyQrW6I7CI");
+const genAI = new GoogleGenerativeAI("AIzaSyBpagUfsms1_cQjroyEJ3mEjz1OnHZoXQM");
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash", // Updated to the current stable flash model name
+  model: "gemini-2.5-flash", // Updated to the current stable flash model name
   systemInstruction: {
     role: "system",
-    parts: [{ text: `
-      You are a specialized medical chatbot for the hospital identified by the user. 
-      
-      RULES:
-      1. First, identify the specific hospital the user is inquiring about based on the context provided.
-      2. Provide information ONLY regarding that specific hospital.
-      3. Use your internal knowledge and search capabilities to find details about that hospital.
-      4. If specific details (like specific services) are unavailable, provide the hospital's official phone number or general contact info.
-      5. Keep responses extremely SHORT, CLEAR, and TO THE POINT. Avoid fluff or long introductions.
-    `}],
+     parts: [{ text: `
+    You are a professional Health Assistant. 
+    
+    RULES:
+    1. LIMIT: Provide a maximum of 2-3 concise sentences.
+    2. DIRECT: Answer the user's question immediately. Use bold text for medication names or key actions.
+    3. OTC ONLY: If asked about medicine, mention common over-the-counter options like **Acetaminophen** or **Ibuprofen** generally, but do not give dosages.
+    4. MANDATORY DISCLAIMER: Every response must end with: "Consult a doctor for personal medical advice."
+    5. EMERGENCY: If symptoms sound life-threatening, tell them to call 911 immediately.
+  `}],
   },
   safetySettings: [
     { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
@@ -43,9 +43,9 @@ async function checkForAnswer(question: string) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { message, hospitalId, hospitalName } = body; 
+    const { message } = body; 
 
-    console.log("Processing question for Hospital:", hospitalId);
+    console.log("Processing question for Hospital:", message);
 
     // 1. Check Database for Similar Questions
     try {
@@ -76,15 +76,12 @@ export async function POST(req: Request) {
     // 3. Use Gemini if no database match found
     const chat = model.startChat({
       generationConfig: {
-        temperature: 0.5,
-        maxOutputTokens: 500,
+        temperature: 0.3,
+        maxOutputTokens: 800,
       },
     });
 
-    const promptWithContext = `
-      Context: You are the assistant for ${hospitalName || 'the hospital'} (ID: ${hospitalId}). 
-      Rule: Always refer to the hospital by its name, not its ID number.
-      User Question: ${message}`;
+    const promptWithContext = `User Question: ${message}`;
 
     const result = await chat.sendMessage(promptWithContext);
     const response = await result.response;

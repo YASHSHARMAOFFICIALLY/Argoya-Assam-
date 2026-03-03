@@ -13,7 +13,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
-      content: "Hello! I'm your health assistant. Ask me about anemia, screening, symptoms, or next steps.",
+      content: "Hello! I'm your health assistant. Ask me about anemia, screening, symptoms, or next stepss.",
       timestamp: new Date(),
     },
   ]);
