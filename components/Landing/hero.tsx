@@ -13,10 +13,7 @@ export  default function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Text Content */}
           <div className="text-neutral-900 space-y-8 animate-fade-in">
-            {/* Badge */}
-            {/* <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full">
-              <span className="w-2 h-2 bg-accent-400 rounded-full animate-pulse">yash</span>
-            </div> */}
+           
 
             {/* Main Heading */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight dark:text-white">
