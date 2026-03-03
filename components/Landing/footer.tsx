@@ -13,7 +13,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="relative bg-slate-900 text-white overflow-hidden">
+    <footer className="relative bg-slate-900 text-white overflow-hidden bg-linear-to-b dark:from-[#0a0f1d] dark:to-[#0a0f1d]">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 left-10 h-64 w-64 rounded-full bg-primary-500 blur-3xl" />
