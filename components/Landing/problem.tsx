@@ -32,7 +32,7 @@ export default function Problem() {
   ]
 
   return (
-    <section id="problem" className="py-24 bg-slate-50 relative overflow-hidden">
+    <section id="problem" className="py-24 bg-slate-50  relative overflow-hidden">
       {/* Background Decorative Elements - Matching Hero Style */}
       <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-100/50 blur-[120px] rounded-full -z-10"></div>
       <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-accent-100/40 blur-[100px] rounded-full -z-10"></div>
@@ -42,12 +42,12 @@ export default function Problem() {
         <div className="text-center max-w-3xl mx-auto mb-20">
           <div className="inline-flex items-center space-x-2 bg-primary-100 border border-primary-200 px-4 py-1.5 rounded-full mb-6">
           
-            <span className="text-4xl font-bold text-primary-700 text-center uppercase tracking-normal">Problem</span>
+            <span className="text-4xl font-bold text-primary-700 text-center uppercase tracking-normal dark:text-white">Problem</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-display font-bold text-slate-900 leading-tigh">
             Anemia is a <span className=" bg-clip-text bg-gradient-to-r text-red-600 from-primary-600 to-primary-800">Silent Epidemic</span>
           </h2>
-          <p className="text-lg text-slate-600 mt-6 leading-relaxed ">
+          <p className="text-lg text-slate-600 mt-6 leading-relaxed dark:bg-white ">
             Despite being preventable, millions of women in rural Assam suffer due to systemic barriers that our smartphone technology eliminates.
           </p>
         </div>
@@ -74,46 +74,7 @@ export default function Problem() {
           ))}
         </div>
 
-        {/* Impact Statement - High Contrast "Hero-Style" Card */}
-        {/* <div className="mt-20 relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-8 md:p-16 text-white shadow-2xl">
         
-          <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/20 blur-[80px] rounded-full"></div>
-          
-          <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
-            <div>
-              <h3 className="text-3xl md:text-4xl font-bold mb-8 leading-tight">
-                The Cost of <br/><span className="text-accent-400 font-display italic">Inaction</span>
-              </h3>
-              <div className="space-y-6">
-                {[
-                  "Maternal mortality during pregnancy",
-                  "Impaired child cognitive development",
-                  "Reduced local economic productivity"
-                ].map((text, i) => (
-                  <div key={i} className="flex items-center space-x-4 group">
-                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-accent-400 transition-colors">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-lg text-slate-300">{text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl text-center">
-                <div className="text-5xl font-black text-accent-400 mb-2">3.5M+</div>
-                <p className="text-sm text-slate-400 uppercase tracking-widest font-bold">Women Affected</p>
-              </div>
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl text-center">
-                <div className="text-5xl font-black text-white mb-2">₹2k Cr</div>
-                <p className="text-sm text-slate-400 uppercase tracking-widest font-bold">Economic Burden</p>
-              </div>
-            </div>
-          </div>
-        </div> */}
       </div>
     </section>
   )

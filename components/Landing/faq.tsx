@@ -18,11 +18,11 @@ const faqs = [
 		question: "Who can get anemia?",
 		answer: "Anyone, but it is more common in girls and women, pregnant women, children, and people who skip meals or eat less nutritious food.",
 	},
-	{
-		question: "Is anemia dangerous?",
-		answer:
-			"Mild anemia is treatable, but severe untreated anemia can strain the heart, cause fainting, and reduce strength and work ability.",
-	},
+	// {
+	// 	question: "Is anemia dangerous?",
+	// 	answer:
+	// 		"Mild anemia is treatable, but severe untreated anemia can strain the heart, cause fainting, and reduce strength and work ability.",
+	// },
 	{
 		question: "What are the common signs of anemia?",
 		answer:
