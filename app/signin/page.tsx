@@ -1,3 +1,4 @@
+// app/signin/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -66,7 +67,7 @@ const aliasStorageKey = "alias";
 		setFormData((prev) => ({ ...prev, [field]: event.target.value }));
 	};
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setError("");
 		setSuccessMessage(null);
@@ -83,13 +84,25 @@ const aliasStorageKey = "alias";
 
 		setLoading(true);
 
-		setTimeout(() => {
-			setLoading(false);
+		try {
+			const res = await fetch("/api/signin", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(formData),
+			});
+
+			const data = await res.json();
+			if (!res.ok) throw new Error(data.error || "Sign in failed");
+
 			setSuccessMessage("Signed in successfully! Redirecting...");
 			setTimeout(() => {
 				router.push("/");
 			}, 800);
-		}, 900);
+		} catch (err: any) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -202,6 +215,17 @@ const aliasStorageKey = "alias";
 								)}
 							</button>
 						</form>
+
+            {/* Google Sign-In Button */}
+            <div className="mt-4">
+              <button
+                onClick={() => window.location.href = '/api/auth/google'}
+                disabled={loading}
+                className="w-full rounded-full bg-blue-600 py-3.5 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+              >
+                Sign In with Google
+              </button>
+            </div>
 
 						{/* Footer Link */}
 						<div className="mt-6 text-center">
